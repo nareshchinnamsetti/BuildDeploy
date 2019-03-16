@@ -19,11 +19,17 @@ resource "aws_instance" "myfirstec2"{
               mv apache-tomcat-8.5.15.zip /opt
               cd /opt
               unzip apache-tomcat-8.5.15.zip
-              cd apache-tomcat-8.5.15
-              
-              echo "Hello DevOps Geeks, Welcome to Jenkins Terraform-pipeline" > /var/www/html/index.html
+              TOMCAT_HOME = /opt/apache-tomcat-8.5.15             
+              echo " <tomcat-users> 
+                        <role rolename="manager-gui"/>
+                        <role rolename="manager-script"/>
+                        <user username="tomcat" password="tomcat" roles="manager-script,manager-gui"/>
+                     </tomcat-users>"> ${TOMCAT_HOME}/conf/tomcat-users.xml
               apt-get update -y
-              service apache2 start
+              cd ${TOMCAT_HOME}
+              chmod +x /bin/startup.sh
+              ./ bin/startup.sh
+               start
               EOF
 
   tags { 
@@ -38,8 +44,8 @@ resource "aws_security_group" "instance" {
   
   # Inbound Apache from anywhere
   ingress { 
-    from_port = 80
-    to_port = 80
+    from_port = 8080
+    to_port = 8080
     protocol = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
