@@ -11,25 +11,38 @@ resource "aws_instance" "myfirstec2"{
   key_name = "mykey"
   user_data = <<-EOF
               #!/bin/bash
-              echo "Install Java "
-              apt-get update
-              apt-get install default-jre
-              apt-get install zip unzip
-              wget http://mirrors.estointernet.in/apache/tomcat/tomcat-8/v8.5.38/bin/apache-tomcat-8.5.38.zip
-              mv apache-tomcat-8.5.15.zip /opt
-              cd /opt
-              unzip apache-tomcat-8.5.15.zip
-              TOMCAT_HOME = /opt/apache-tomcat-8.5.15             
-              echo " <tomcat-users> 
-                        <role rolename="manager-gui"/>
-                        <role rolename="manager-script"/>
-                        <user username="tomcat" password="tomcat" roles="manager-script,manager-gui"/>
-                     </tomcat-users>"> ${TOMCAT_HOME}/conf/tomcat-users.xml
-              apt-get update -y
-              cd ${TOMCAT_HOME}
-              chmod +x /bin/startup.sh
-              ./ bin/startup.sh
-               start
+              echo "Installing java and tomcat"
+apt-get update
+apt-get install -y default-jre
+apt-get install -y zip unzip
+apt-get install maven -y
+wget http://mirrors.estointernet.in/apache/tomcat/tomcat-8/v8.5.38/bin/apache-tomcat-8.5.38.zip
+mv apache-tomcat-8.5.38.zip /opt
+cd /opt
+unzip apache-tomcat-8.5.38.zip
+
+echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+<tomcat-users xmlns=\"http://tomcat.apache.org/xml\"
+              xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"
+              xsi:schemaLocation=\"http://tomcat.apache.org/xml tomcat-users.xsd\"
+              version=\"1.0\">
+  <role rolename=\"manager-gui\"/>
+  <user username=\"tomcat\" password=\"tomcat\" roles=\"manager-gui\"/>
+</tomcat-users>"  > /opt/apache-tomcat-8.5.38/conf/tomcat-users.xml
+echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+<Context antiResourceLocking=\"false\" privileged=\"true\" >
+  <Manager sessionAttributeValueClassNameFilter=\"java\.lang\.(?:Boolean|Integer|Long|Number|String)|org\.apache\.catalina\.filters\.CsrfPreventionFilter\$LruCache(?:\$1)?|java\.util\.(?:Linked)?HashMap\"/>
+</Context>" > /opt/apache-tomcat-8.5.38/webapps/manager/META-INF/context.xml
+
+git clone https://github.com/efsavage/hello-world-war.git
+cd hello-world-war/
+mvn package
+cd target
+cp hello-world-war-1.0.0.war /opt/apache-tomcat-8.5.38/webapps
+
+chmod +x /opt/apache-tomcat-8.5.38/bin/catalina.sh
+chmod +x /opt/apache-tomcat-8.5.38/bin/startup.sh
+sh /opt/apache-tomcat-8.5.38/bin/startup.sh
               EOF
 
   tags { 
