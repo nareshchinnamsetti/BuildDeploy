@@ -25,7 +25,8 @@ resource "aws_instance" "myfirstec2"{
                             xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"
                             version=\"1.0\">
               <role rolename=\"manager-gui\"/>
-              <user username=\"tomcat\" password=\"tomcat\" roles=\"manager-gui\"/>
+              <role rolename=\"manager-script\"/>
+              <user username=\"tomcat\" password=\"tomcat\" roles=\"manager-script,manager-gui\"/>
               </tomcat-users>"  > /opt/apache-tomcat-8.5.38/conf/tomcat-users.xml
               echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
               <Context antiResourceLocking=\"false\" privileged=\"true\" >
