@@ -27,20 +27,29 @@ resource "aws_instance" "myfirstec2"{
               <role rolename=\"manager-gui\"/>
               <user username=\"tomcat\" password=\"tomcat\" roles=\"manager-gui\"/>
               </tomcat-users>"  > /opt/apache-tomcat-8.5.38/conf/tomcat-users.xml
+              echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+              <Context antiResourceLocking=\"false\" privileged=\"true\" >
+                <Manager sessionAttributeValueClassNameFilter=\"java\.lang\.(?:Boolean|Integer|Long|Number|String)|org\.apache\.catalina\.filters\.CsrfPreventionFilter\$LruCache(?:\$1)?|java\.util\.(?:Linked)?HashMap\"/>
+              </Context>" > /opt/apache-tomcat-8.5.38/webapps/manager/META-INF/context.xml
+              git clone https://github.com/efsavage/hello-world-war.git
+              cd hello-world-war/
+              mvn package
+              cd target
+              cp hello-world-war-1.0.0.war /opt/apache-tomcat-8.5.38/webapps
               chmod +x /opt/apache-tomcat-8.5.38/bin/catalina.sh
               chmod +x /opt/apache-tomcat-8.5.38/bin/startup.sh
               sh /opt/apache-tomcat-8.5.38/bin/startup.sh
               EOF
 
   tags { 
-    Name = "tommy"
+    Name = "tomcat"
 
   }
 }
 
 
 resource "aws_security_group" "instance" {
-  name = "tomm-security-group"
+  name = "tomy-security-group"
   
   # Inbound tomcat from anywhere
   ingress { 
