@@ -33,14 +33,14 @@ resource "aws_instance" "myfirstec2"{
               EOF
 
   tags { 
-    Name = "Tom"
+    Name = "tommy"
 
   }
 }
 
 
 resource "aws_security_group" "instance" {
-  name = "tom-security-group"
+  name = "tomm-security-group"
   
   # Inbound tomcat from anywhere
   ingress { 
