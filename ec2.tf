@@ -19,6 +19,17 @@ resource "aws_instance" "myfirstec2"{
               mv apache-tomcat-8.5.38.zip /opt
               cd /opt
               unzip apache-tomcat-8.5.38.zip
+              echo \"<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+              <tomcat-users xmlns=\"http://tomcat.apache.org/xml\"
+                            xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"
+                            xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"
+                            version=\"1.0\">
+              <role rolename=\"manager-gui\"/>
+              <user username=\"tomcat\" password=\"tomcat\" roles=\"manager-gui\"/>
+              </tomcat-users>\"  > /opt/apache-tomcat-8.5.38/conf/tomcat-users.xml
+              chmod +x /opt/apache-tomcat-8.5.38/bin/catalina.sh
+              chmod +x /opt/apache-tomcat-8.5.38/bin/startup.sh
+              sh /opt/apache-tomcat-8.5.38/bin/startup.sh
               EOF
 
   tags { 
